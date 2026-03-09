@@ -115,13 +115,16 @@
     </thead>
     <tbody>
         <tr th:each="item : ${lowStockItems}">
-            <td th:text="${item.title}">T-Shirt</td>
+            <td th:text="${item.variant.title}">T-Shirt</td>
             <td>
-                <span class="pill" th:text="${item.size}">M</span>
-                <span class="pill" th:text="${item.color}">Black</span>
+                <span class="pill" th:text="${item.variant.size}">M</span>
+                <span class="pill" th:text="${item.variant.color}">Black</span>
             </td>
-            <td th:text="${item.location}">Main Warehouse</td>
-            <td th:text="${item.quantity}">5</td>
+            <td>
+                <span th:if="${item.stockByLocation.isEmpty()}" class="muted">No location assigned</span>
+                <span th:each="entry : ${item.stockByLocation}" class="pill" th:text="${entry.key}">Main Warehouse</span>
+            </td>
+            <td th:text="${item.totalStock}">5</td>
             <td>
                 <span class="badge badge-warning">Low Stock</span>
             </td>
@@ -140,6 +143,7 @@
         <tr>
             <th>ID</th>
             <th>Item</th>
+            <th>Type</th>
             <th>Location</th>
             <th>Date</th>
             <th>Status</th>
@@ -148,19 +152,17 @@
     <tbody>
         <tr th:each="delivery : ${recentDeliveries}">
             <td th:text="${delivery.id}">1</td>
-            <td th:text="${delivery.itemName}">T-Shirt</td>
+            <td th:text="${delivery.variant != null ? delivery.variant.title : 'Unknown item'}">T-Shirt</td>
+            <td th:text="${delivery.deliveryType}">Express</td>
             <td th:text="${delivery.location}">Toronto</td>
             <td th:text="${delivery.deliveryDate}">2025-03-15</td>
             <td>
-                <span class="badge" 
-                      th:classappend="${delivery.status == 'Delivered'} ? 'badge-success' : 
-                                      (${delivery.status == 'In Transit'} ? 'badge-warning' : 'badge-secondary')"
-                      th:text="${delivery.status}">Pending</span>
+                <span class="badge badge-success" th:text="${delivery.status}">Delivered</span>
             </td>
         </tr>
         <tr th:if="${recentDeliveries == null or recentDeliveries.isEmpty()}">
-            <td colspan="5" style="text-align: center; padding: 30px;" class="muted">
-                No recent deliveries found.
+            <td colspan="6" style="text-align: center; padding: 30px;" class="muted">
+                No delivered deliveries in the past 10 days.
             </td>
         </tr>
     </tbody>
