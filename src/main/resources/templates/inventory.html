@@ -35,7 +35,7 @@
                 <p class="muted">Showing variants with total stock and stock by location.</p>
             </div>
             <div class="top-actions">
-                <a href="/inventory/new" class="btn">Add New Item</a>
+                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newItemModal">Add New Item</button>
             </div>
         </div>
 
@@ -159,12 +159,28 @@
                     <form th:action="@{'/inventory/' + ${row.variant.id}}" method="get">
                         <button type="submit" class="btn view-btn">View Details</button>
                     </form>
-                    <form th:action="@{'/inventory/' + ${row.variant.id} + '/stock/new'}" method="get">
-                        <button type="submit" class="btn add-btn">Add Stock</button>
-                    </form>
-                    <form th:action="@{'/inventory/' + ${row.variant.id} + '/edit'}" method="get">
-                        <button type="submit" class="btn update-btn">Update</button>
-                    </form>
+                    <button type="button"
+                            class="btn add-btn open-add-stock-modal"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addStockModal"
+                            th:attr="data-variant-id=${row.variant.id},
+                                     data-variant-title=${row.variant.title},
+                                     data-variant-color=${row.variant.color},
+                                     data-variant-size=${row.variant.size}">
+                        Add Stock
+                    </button>
+                    <button type="button"
+                            class="btn update-btn open-edit-variant-modal"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editVariantModal"
+                            th:attr="data-variant-id=${row.variant.id},
+                                     data-title=${row.variant.title},
+                                     data-category=${row.variant.category},
+                                     data-size=${row.variant.size},
+                                     data-color=${row.variant.color},
+                                     data-unit-price=${row.variant.unitPrice}">
+                        Update
+                    </button>
                     <form th:action="@{'/inventory/' + ${row.variant.id} + '/delete'}" method="post">
                         <button type="submit" class="btn delete-btn">Delete</button>
                     </form>
@@ -190,5 +206,46 @@
             th:href="@{/inventory(page=${inventoryPage.totalPages - 1}, pageSize=${pageSize}, sort=${currentSort}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Last »</a>
         </div>
     </div>
+
+    <div th:replace="~{fragments/inventory-modals :: inventoryModals}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const editForm = document.getElementById('editVariantFormElement');
+            const addStockForm = document.getElementById('addStockFormElement');
+
+            document.querySelectorAll('.open-edit-variant-modal').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.dataset.variantId;
+                    document.getElementById('editVariantId').value = id;
+                    document.getElementById('editTitle').value = this.dataset.title;
+                    document.getElementById('editCategory').value = this.dataset.category;
+                    document.getElementById('editSize').value = this.dataset.size;
+                    document.getElementById('editColor').value = this.dataset.color;
+                    document.getElementById('editUnitPrice').value = this.dataset.unitPrice;
+                    editForm.action = '/inventory/' + id + '/edit';
+                });
+            });
+
+            document.querySelectorAll('.open-add-stock-modal').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.dataset.variantId;
+                    document.getElementById('stockVariantTitle').value =
+                        this.dataset.variantTitle + ' - ' + this.dataset.variantColor + ' (' + this.dataset.variantSize + ')';
+                    addStockForm.action = '/inventory/' + id + '/stock/new';
+                });
+            });
+
+            const openModal = /*[[${openModal}]]*/ '';
+            if (openModal) {
+                const modalElement = document.getElementById(openModal);
+                if (modalElement) {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

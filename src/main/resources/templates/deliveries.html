@@ -35,9 +35,11 @@
                 <p class="muted">Manage incoming and outgoing delivery orders.</p>
             </div>
             <div class="top-actions">
-                <a href="/deliveries/new" class="btn mb-3">Create New Delivery</a>
+                <button type="button" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#newDeliveryModal">Create New Delivery</button>
             </div>
         </div>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Success</div>
 
         <div class="filter-section">
             <form method="get" th:action="@{/deliveries}">
@@ -144,7 +146,7 @@
             </tr>
             <tr th:if="${deliveriesPage.totalElements == 0}">
                 <td colspan="8" style="text-align: center; padding: 30px;" class="muted">
-                    No deliveries found. <a href="/deliveries/new">Create your first delivery</a>.
+                    No deliveries found. <button type="button" class="btn btn-link p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#newDeliveryModal">Create your first delivery</button>.
                 </td>
             </tr>
             </tbody>
@@ -162,5 +164,21 @@
             th:href="@{/deliveries(page=${deliveriesPage.totalPages - 1}, sort=${currentSort}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Last »</a>
         </div>
     </div>
+
+    <div th:replace="~{fragments/delivery-modals :: deliveryModals}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const openModal = /*[[${openModal}]]*/ '';
+            if (openModal) {
+                const modalElement = document.getElementById(openModal);
+                if (modalElement) {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

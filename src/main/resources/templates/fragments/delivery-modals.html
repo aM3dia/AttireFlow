@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="deliveryModals">
+    <div class="modal fade" id="newDeliveryModal" tabindex="-1" aria-labelledby="newDeliveryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form th:action="@{/deliveries/save}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="newDeliveryModalLabel">Create New Delivery</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div th:if="${openModal == 'newDeliveryModal' and errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Error</div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Delivery Type</label>
+                                <select name="deliveryType" class="form-select" required>
+                                    <option value="">Select type</option>
+                                    <option value="Express" th:selected="${delivery.deliveryType == 'Express'}">Express</option>
+                                    <option value="Regular" th:selected="${delivery.deliveryType == 'Regular'}">Regular</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Delivery Date</label>
+                                <input type="date" name="deliveryDate" class="form-control" th:value="${enteredDeliveryDate}" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Location</label>
+                                <input type="text" name="location" class="form-control" th:value="${delivery.location}" required>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label">Item</label>
+                                <select name="variantId" class="form-select" required>
+                                    <option value="">Select item</option>
+                                    <option th:each="variant : ${variants}"
+                                            th:value="${variant.id}"
+                                            th:text="${variant.title + ' - ' + variant.color + ' (' + variant.size + ')'}"
+                                            th:selected="${selectedVariantId != null and selectedVariantId == variant.id}">
+                                        Variant
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" name="quantity" min="1" class="form-control" th:value="${delivery.quantity}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn">Create Delivery</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

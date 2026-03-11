@@ -49,6 +49,7 @@ public class Variant {
     public BigDecimal getUnitPrice() { return unitPrice; }
     public List<VariantStock> getStocks() { return stocks; }
 
+    public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setCategory(String category) { this.category = category; }
     public void setSize(String size) { this.size = size; }
