@@ -5,28 +5,11 @@
     <meta charset="UTF-8"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link th:href="@{/dashboard.css}" rel="stylesheet"/>
     <link th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 
 <body>
-    <div class="navigation"></div>
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="nav-container">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a th:href="@{/}" class="nav-link"><i class="bi bi-grid"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/inventory}" class="nav-link"><i class="bi bi-box"></i> Inventory</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/deliveries}" class="nav-link"><i class="bi bi-truck"></i> Deliveries</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+    <div th:replace="fragments/navbar :: navbar"></div>
 
     <div class="main-body">
         <div class="header">
@@ -42,8 +25,8 @@
                     <h3>Total Products</h3>
                     <p class="number" th:text="${totalProducts}">0</p>
                 </div>
-                <div class="icon" style="background-color: rgba(255, 168, 5, 0.2);">
-                    <i class="bi bi-box" style="color: orange;"></i>
+                <div class="icon" style="background-color: rgba(188, 213, 249, 0.4);">
+                    <i class="bi bi-box-seam" style="color: blue;"></i>
                 </div>
             </div>
             
@@ -53,7 +36,7 @@
                     <p class="number" th:text="${lowStockCount}">0</p>
                 </div>
                 <div class="icon" style="background-color: rgba(255, 0, 0, 0.2);">
-                    <i class="bi bi-graph-down" style="color: red;"></i>
+                    <i class="bi bi-exclamation-circle" style="color: red;"></i>
                 </div>
             </div>
             
@@ -62,8 +45,8 @@
                     <h3>Pending Deliveries</h3>
                     <p class="number" th:text="${pendingDeliveries}">0</p>
                 </div>
-                <div class="icon" style="background-color: rgba(0, 0, 255, 0.2);">
-                    <i class="bi bi-truck" style="color: blue;"></i>
+                <div class="icon" style="background-color: rgba(255, 165, 0, 0.2);">
+                    <i class="bi bi-truck" style="color: orange;"></i>
                 </div>
             </div>
             
@@ -78,71 +61,54 @@
             </div>
         </div>
 
-        <h2>Low Stock Alerts</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Size / Color</th>
-                    <th>Location</th>
-                    <th>Current Stock</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="item : ${lowStockItems}">
-                    <td th:text="${item.variant.title}">T-Shirt</td>
-                    <td>
-                        <span class="pill" th:text="${item.variant.size}">M</span>
-                        <span class="pill" th:text="${item.variant.color}">Black</span>
-                    </td>
-                    <td>
-                        <span th:if="${item.stockByLocation.isEmpty()}" class="muted">No location assigned</span>
-                        <span th:each="entry : ${item.stockByLocation}" class="pill" th:text="${entry.key}">Main Warehouse</span>
-                    </td>
-                    <td th:text="${item.totalStock}">5</td>
-                    <td>
-                        <span class="badge badge-warning">Low Stock</span>
-                    </td>
-                </tr>
-                <tr th:if="${lowStockItems == null or lowStockItems.isEmpty()}">
-                    <td colspan="5" style="text-align: center; padding: 30px;" class="muted">
-                        No low stock items found.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="row" style="margin: 0; gap: 20px;">
+            <!-- Low Stock Dashboard -->
+            <div class="stock-alerts card col" style="flex-direction: column;">
+                <div class="intro">
+                    <h2 style="padding-bottom: 0;">Low Stock Alerts</h2>
+                </div>
 
-        <h2>Recent Deliveries</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Item</th>
-                    <th>Type</th>
-                    <th>Location</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="delivery : ${recentDeliveries}">
-                    <td th:text="${delivery.id}">1</td>
-                    <td th:text="${delivery.variant != null ? delivery.variant.title : 'Unknown item'}">T-Shirt</td>
-                    <td th:text="${delivery.deliveryType}">Express</td>
-                    <td th:text="${delivery.location}">Toronto</td>
-                    <td th:text="${delivery.deliveryDate}">2025-03-15</td>
-                    <td>
-                        <span class="badge badge-success" th:text="${delivery.status}">Delivered</span>
-                    </td>
-                </tr>
-                <tr th:if="${recentDeliveries == null or recentDeliveries.isEmpty()}">
-                    <td colspan="6" style="text-align: center; padding: 30px;" class="muted">
-                        No delivered deliveries in the past 10 days.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                <div class="intro dash-info" th:each="item : ${lowStockItems}" style="border-top: 2px solid #ddd; padding-top: 20px; margin-top: 20px;">
+                    <div class="info-header stock-header" style="display: flex; justify-content: space-between;">
+                        <h2 th:text="${item.variant.title}" style="padding: 0; font-size: 1.1em;">T-Shirt</h2>
+                        <div class="status">
+                            <span class="badge badge-warning">Low Stock</span>
+                        </div>
+                    </div>
+                    <div class="details stock-details row">
+                        <span th:each="entry : ${item.stockByLocation}">Main Warehouse</span>
+                        <div class="col">
+                            <span>Qty: <span th:text="${item.totalStock}">0</span></span>
+                        </div>
+                        <div class="col">
+                            <span>Size: <span th:text="${item.variant.size}">M</span></span>
+                        </div>
+                        <div class="col">
+                            <span>Color: <span th:text="${item.variant.color}">Black</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Deliveries -->
+            <div class="recent-deliveries card col" style="flex-direction: column;">
+                <div class="intro">
+                    <h2 style="padding-bottom: 0;">Recent Deliveries</h2>
+                </div>
+                <div class="intro dash-info" th:each="delivery : ${recentDeliveries}" style="border-top: 2px solid #ddd; padding-top: 20px; margin-top: 20px;">
+                    <div class="info-header delivery-header" style="display: flex; justify-content: space-between;">
+                        <h2 th:text="${delivery.location} + ' - ' + ${delivery.deliveryType} + ' ' + 'Delivery'" style="padding: 0; font-size: 1.1em;">Toronto - Express</h2>
+                        <div class="status">
+                            <span class="badge badge-success" th:text="${delivery.status} + ' ' + ${delivery.deliveryDate}">Delivered</span>
+                        </div>
+                    </div>
+                    <div class="details delivery-details row">
+                        <span th:text="${delivery.variant != null ? delivery.variant.title : 'Unknown item'}">T-Shirt</span>
+                        <span th:text="${delivery.quantity + ' ' + (delivery.quantity == 1 ? 'unit' : 'units')}">10 units</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -5,28 +5,31 @@
     <meta charset="UTF-8"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link th:href="@{/inventory.css}" rel="stylesheet"/>
+    <link th:href="@{/inventory-deliveries.css}" rel="stylesheet"/>
     <link th:href="@{/styles.css}" rel="stylesheet"/>
+
+    <style>
+        table {
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0; 
+        }
+            
+        th {
+            background: #f5f5f5; 
+        }
+
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 10px;
+            text-align: left; 
+            vertical-align: top;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="navigation"></div>
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="nav-container">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a th:href="@{/}" class="nav-link"><i class="bi bi-grid"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/inventory}" class="nav-link"><i class="bi bi-box"></i> Inventory</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/deliveries}" class="nav-link"><i class="bi bi-truck"></i> Deliveries</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+    <div th:replace="fragments/navbar :: navbar"></div>
 
     <div class="main-body">
         <div class="header">
@@ -35,13 +38,13 @@
                 <p class="muted">Showing variants with total stock and stock by location.</p>
             </div>
             <div class="top-actions">
-                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newItemModal">Add New Item</button>
+                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newItemModal"><i class="bi bi-plus-lg" style="margin-right: 5px"></i>Add New Item</button>
             </div>
         </div>
 
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Success</div>
 
-        <div class="filter-section">
+        <div class="card" style="margin: 20px 0;">
             <form method="get" th:action="@{/inventory}">
                 <input type="hidden" name="page" value="0" />
                 <input type="hidden" name="sort" th:value="${currentSort}" />
@@ -98,101 +101,97 @@
             </form>
         </div>
 
-        <table>
-            <thead>
-            <tr>
-                <th>
-                    <a th:href="@{/inventory(page=0, pageSize=${pageSize}, sort='title,' + ${#strings.toLowerCase(currentSort == 'title,desc' ? 'asc' : 'desc')}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Title
-                        <span th:if="${currentSort == 'title,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'title,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/inventory(page=0, pageSize=${pageSize}, sort='category,' + ${#strings.toLowerCase(currentSort == 'category,desc' ? 'asc' : 'desc')}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Category
-                        <span th:if="${currentSort == 'category,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'category,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/inventory(page=0, pageSize=${pageSize}, sort='size,' + ${#strings.toLowerCase(currentSort == 'size,desc' ? 'asc' : 'desc')}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Size / Color
-                        <span th:if="${currentSort == 'size,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'size,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/inventory(page=0, pageSize=${pageSize}, sort='totalStock,' + ${#strings.toLowerCase(currentSort == 'totalStock,desc' ? 'asc' : 'desc')}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Total Stock
-                        <span th:if="${currentSort == 'totalStock,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'totalStock,desc'}" th:text="'▼'" class="asc-desc"></span> 
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/inventory(page=0, pageSize=${pageSize}, sort='locationCount,' + ${#strings.toLowerCase(currentSort == 'locationCount,desc' ? 'asc' : 'desc')}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}"># Locations
-                        <span th:if="${currentSort == 'locationCount,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'locationCount,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>Stock by Location</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="row : ${inventoryPage.content}">
-                <td th:text="${row.variant.title}">Title</td>
-                <td th:text="${row.variant.category}">Category</td>
-                <td>
-                    <span class="pill" th:text="${row.variant.size}">M</span>
-                    <span class="pill" th:text="${row.variant.color}">Black</span>
-                </td>
-                <td th:text="${row.totalStock}">0</td>
-                <td th:text="${row.locationCount}">0</td>
-                <td class="stock-locations">
-                    <div th:if="${#maps.isEmpty(row.stockByLocation)}" class="muted">No stock locations</div>
-                    <ul th:if="${!#maps.isEmpty(row.stockByLocation)}">
-                        <li th:each="entry : ${row.stockByLocation}">
-                            <span th:text="${entry.key}">Location</span>:
-                            <span th:text="${entry.value}" style="font-weight: bold;">0</span>
-                            <span th:text="${entry.value == 1} ? 'unit' : 'units'" style="font-weight: bold;"></span>
-                        </li>
-                    </ul>
-                </td>
-                <td class="actions">
-                    <form th:action="@{'/inventory/' + ${row.variant.id}}" method="get">
-                        <button type="submit" class="btn view-btn">View Details</button>
-                    </form>
-                    <button type="button"
-                            class="btn add-btn open-add-stock-modal"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addStockModal"
-                            th:attr="data-variant-id=${row.variant.id},
-                                     data-variant-title=${row.variant.title},
-                                     data-variant-color=${row.variant.color},
-                                     data-variant-size=${row.variant.size}">
-                        Add Stock
-                    </button>
-                    <button type="button"
-                            class="btn update-btn open-edit-variant-modal"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editVariantModal"
-                            th:attr="data-variant-id=${row.variant.id},
-                                     data-title=${row.variant.title},
-                                     data-category=${row.variant.category},
-                                     data-size=${row.variant.size},
-                                     data-color=${row.variant.color},
-                                     data-unit-price=${row.variant.unitPrice}">
-                        Update
-                    </button>
-                    <form th:action="@{'/inventory/' + ${row.variant.id} + '/delete'}" method="post">
-                        <button type="submit" class="btn delete-btn">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${inventoryPage.totalElements == 0}">
-                <td colspan="7" style="text-align: center; padding: 30px;" class="muted">
-                    No inventory items found for the selected filters.
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <!-- content -->
+
+        <div class="row row-cols-3" style="gap: 20px 0;">
+            <div class="col" th:each="row : ${inventoryPage.content}">
+                <div class="card h-100 g-4" style="flex-direction: column !important;">
+                    <div class="title" style="display: flex; flex-direction: row;">
+                        <div class="variant-title">
+                            <h2 th:text="${row.variant.title}">Variant</h2>
+                        </div>
+                        <div class="icon" style="background-color: rgba(188, 213, 249, 0.4); font-size: 1.5em;">
+                            <i class="bi bi-box-seam" style="color: blue;"></i>
+                        </div>
+                    </div>
+
+                    <div class="row row-cols-2" style="border-bottom: 1px solid lightgray; padding: 20px 0; gap: 10px 0; margin: 20px 0;">
+                        <div class="category details">
+                            <span class="field">Category</span>
+                            <span th:text="${row.variant.category}" class="item-dets">T-shirt</span>
+                        </div>
+
+                        <div class="size-color details">
+                            <span class="field">Size/Color</span>
+                            <span th:text="${row.variant.size + '/' + row.variant.color}" class="item-dets">M/Black</span>
+                        </div>
+
+                        <div class="stock details">
+                            <span class="field">Total Stock</span>
+                            <span th:text="${row.totalStock}" class="item-dets">1234</span>
+                        </div>
+
+                        <div class="locations details">
+                            <span class="field">Locations</span>
+                            <span th:text="${row.locationCount}" class="item-dets">3</span>
+                        </div>
+                    </div>
+
+                    <div class="by-location">
+                        <span>Stock by Location:</span>
+                        <ul th:if="${!#maps.isEmpty(row.stockByLocation)}" style="list-style: none; padding: 0;">
+                            <li th:each="entry : ${row.stockByLocation}" style="margin: 10px 0;">
+                                <span th:text="${entry.key}">Location</span>: 
+                                <span style="font-weight: bold;" th:text="${entry.value + ' ' + (entry.value == 1 ? 'unit' : 'units')}">0 units</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- action buttons -->
+                    <div class="row row-cols-2 g-2">
+                        <div class="col">
+                            <form th:action="@{'/inventory/' + ${row.variant.id}}" method="get">
+                                <button type="submit" class="btn w-100">View Details</button>
+                            </form>
+                        </div>
+
+                        <div class="col">
+                            <button type="button"
+                                    class="btn add-btn open-add-stock-modal w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addStockModal"
+                                    th:attr="data-variant-id=${row.variant.id},
+                                            data-variant-title=${row.variant.title},
+                                            data-variant-color=${row.variant.color},
+                                            data-variant-size=${row.variant.size}">
+                                Add Stock
+                            </button>
+                        </div>
+
+                        <div class="col">
+                            <button type="button"
+                                    class="btn btn-secondary open-edit-variant-modal w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editVariantModal"
+                                    th:attr="data-variant-id=${row.variant.id},
+                                            data-title=${row.variant.title},
+                                            data-category=${row.variant.category},
+                                            data-size=${row.variant.size},
+                                            data-color=${row.variant.color},
+                                            data-unit-price=${row.variant.unitPrice}">
+                                Update
+                            </button>
+                        </div>
+
+                        <div class="col">
+                            <form th:action="@{'/inventory/' + ${row.variant.id} + '/delete'}" method="post">
+                                <button type="submit" class="btn delete-btn w-100" style="width: 100%;">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="pagination" th:if="${inventoryPage.totalPages > 1}">
             <a th:if="${inventoryPage.hasPrevious()}"
@@ -206,7 +205,8 @@
             th:href="@{/inventory(page=${inventoryPage.totalPages - 1}, pageSize=${pageSize}, sort=${currentSort}, title=${selectedTitle}, size=${selectedSize}, color=${selectedColor}, category=${selectedCategory})}">Last »</a>
         </div>
     </div>
-
+    
+    <!-- Modals -->
     <div th:replace="~{fragments/inventory-modals :: inventoryModals}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

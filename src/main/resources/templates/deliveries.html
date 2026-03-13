@@ -5,28 +5,12 @@
     <meta charset="UTF-8"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link th:href="@{/deliveries.css}" rel="stylesheet"/>
+    <link th:href="@{/inventory-deliveries.css}" rel="stylesheet"/>
     <link th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 
 <body>
-    <div class="navigation"></div>
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="nav-container">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a th:href="@{/}" class="nav-link"><i class="bi bi-grid"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/inventory}" class="nav-link"><i class="bi bi-box"></i> Inventory</a>
-                    </li>
-                    <li class="nav-item">
-                        <a th:href="@{/deliveries}" class="nav-link"><i class="bi bi-truck"></i> Deliveries</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+    <div th:replace="fragments/navbar :: navbar"></div>
 
     <div class="main-body">
         <div class="header">
@@ -35,13 +19,13 @@
                 <p class="muted">Manage incoming and outgoing delivery orders.</p>
             </div>
             <div class="top-actions">
-                <button type="button" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#newDeliveryModal">Create New Delivery</button>
+                <button type="button" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#newDeliveryModal"><i class="bi bi-plus-lg" style="margin-right: 5px"></i> Create New Delivery</button>
             </div>
         </div>
 
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Success</div>
 
-        <div class="filter-section">
+        <div class="card" style="margin: 20px 0;">
             <form method="get" th:action="@{/deliveries}">
                 <input type="hidden" name="page" value="0" />
                 <input type="hidden" name="sort" th:value="${currentSort}" />
@@ -56,7 +40,7 @@
                         </select>
                     </div>
                     <div class="filter-item">
-                        <label>Type</label>
+                        <label>Delivery Type</label>
                         <select name="type">
                             <option value="">All</option>
                             <option value="Express" th:selected="${selectedType == 'Express'}">Express</option>
@@ -77,80 +61,83 @@
             </form>
         </div>
 
-        <table>
-            <thead>
-            <tr>
-                <th>
-                    <a th:href="@{/deliveries(page=0, sort='id,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">ID
-                        <span th:if="${currentSort == 'id,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'id,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/deliveries(page=0, sort='deliveryType,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Type
-                        <span th:if="${currentSort == 'deliveryType,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'deliveryType,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/deliveries(page=0, sort='location,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Location
-                        <span th:if="${currentSort == 'location,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'location,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>
-                    <a th:href="@{/deliveries(page=0, sort='deliveryDate,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Delivery Date
-                        <span th:if="${currentSort == 'deliveryDate,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'deliveryDate,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>
-                    <a th:href="@{/deliveries(page=0, sort='status,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Status
-                        <span th:if="${currentSort == 'status,asc'}" th:text="'▲'" class="asc-desc"></span>
-                        <span th:if="${currentSort == 'status,desc'}" th:text="'▼'" class="asc-desc"></span>
-                    </a>
-                </th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="delivery : ${deliveriesPage.content}">
-                <td th:text="${delivery.id}">1</td>
-                <td>
-                    <span class="pill" th:text="${delivery.deliveryType}">Express</span>
-                </td>
-                <td th:text="${delivery.location}">Toronto</td>
-                <td th:text="${delivery.deliveryDate}">2025-03-15</td>
-                <td>
-                    <span th:if="${delivery.variant != null}" th:text="${delivery.variant.title + ' - ' + delivery.variant.color + ' (' + delivery.variant.size + ')'}">T-Shirt</span>
-                    <span th:if="${delivery.variant == null}" class="muted">N/A</span>
-                </td>
-                <td th:text="${delivery.quantity}">10</td>
-                <td>
-                    <span class="badge" 
-                        th:classappend="${delivery.status == 'Delivered'} ? 'badge-success' : 
-                                        (${delivery.status == 'In Transit'} ? 'badge-warning' : 'badge-secondary')"
-                        th:text="${delivery.status}">Pending</span>
-                </td>
-                <td class="actions">
-                    <form th:action="@{'/deliveries/' + ${delivery.id} + '/status'}" method="post">
-                        <select name="status" onchange="this.form.submit()" style="padding: 4px;">
-                            <option value="Pending" th:selected="${delivery.status == 'Pending'}">Pending</option>
-                            <option value="In Transit" th:selected="${delivery.status == 'In Transit'}">In Transit</option>
-                            <option value="Delivered" th:selected="${delivery.status == 'Delivered'}">Delivered</option>
-                        </select>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${deliveriesPage.totalElements == 0}">
-                <td colspan="8" style="text-align: center; padding: 30px;" class="muted">
-                    No deliveries found. <button type="button" class="btn btn-link p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#newDeliveryModal">Create your first delivery</button>.
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <!-- deliveries -->
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <a th:href="@{/deliveries(page=0, sort='id,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">ID
+                                <span th:if="${currentSort == 'id,asc'}" th:text="'▲'" class="asc-desc"></span>
+                                <span th:if="${currentSort == 'id,desc'}" th:text="'▼'" class="asc-desc"></span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a th:href="@{/deliveries(page=0, sort='deliveryType,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Delivery Type
+                                <span th:if="${currentSort == 'deliveryType,asc'}" th:text="'▲'" class="asc-desc"></span>
+                                <span th:if="${currentSort == 'deliveryType,desc'}" th:text="'▼'" class="asc-desc"></span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a th:href="@{/deliveries(page=0, sort='location,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Location
+                                <span th:if="${currentSort == 'location,asc'}" th:text="'▲'" class="asc-desc"></span>
+                                <span th:if="${currentSort == 'location,desc'}" th:text="'▼'" class="asc-desc"></span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a th:href="@{/deliveries(page=0, sort='deliveryDate,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Delivery Date
+                                <span th:if="${currentSort == 'deliveryDate,asc'}" th:text="'▲'" class="asc-desc"></span>
+                                <span th:if="${currentSort == 'deliveryDate,desc'}" th:text="'▼'" class="asc-desc"></span>
+                            </a>
+                        </th>
+                        <th scope="col" style="cursor: pointer;">Item</th>
+                        <th scope="col" style="cursor: pointer;">Quantity</th>
+                        <th scope="col">
+                            <a th:href="@{/deliveries(page=0, sort='status,' + ${#strings.toLowerCase(currentSort.contains('desc') ? 'asc' : 'desc')}, status=${selectedStatus}, type=${selectedType}, location=${selectedLocation})}">Status
+                                <span th:if="${currentSort == 'status,asc'}" th:text="'▲'" class="asc-desc"></span>
+                                <span th:if="${currentSort == 'status,desc'}" th:text="'▼'" class="asc-desc"></span>
+                            </a>
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="delivery : ${deliveriesPage.content}">
+                        <td th:text="${delivery.id}">1</td>
+                        <td>
+                            <span th:text="${delivery.deliveryType} + ' ' + 'Delivery'">Express</span>
+                        </td>
+                        <td th:text="${delivery.location}">Toronto</td>
+                        <td th:text="${delivery.deliveryDate}">2025-03-15</td>
+                        <td>
+                            <span th:if="${delivery.variant != null}" th:text="${delivery.variant.title + ' - ' + delivery.variant.color + ' (' + delivery.variant.size + ')'}">T-Shirt</span>
+                            <span th:if="${delivery.variant == null}" class="muted">N/A</span>
+                        </td>
+                        <td th:text="${delivery.quantity}">10</td>
+                        <td>
+                            <span class="badge" 
+                                th:classappend="${delivery.status == 'Delivered'} ? 'badge-success' : 
+                                                (${delivery.status == 'In Transit'} ? 'badge-warning' : 'badge-secondary')"
+                                th:text="${delivery.status}">Pending</span>
+                        </td>
+                        <td class="actions">
+                            <form th:action="@{'/deliveries/' + ${delivery.id} + '/status'}" method="post">
+                                <select name="status" onchange="this.form.submit()" style="padding: 4px;">
+                                    <option value="Pending" th:selected="${delivery.status == 'Pending'}">Pending</option>
+                                    <option value="In Transit" th:selected="${delivery.status == 'In Transit'}">In Transit</option>
+                                    <option value="Delivered" th:selected="${delivery.status == 'Delivered'}">Delivered</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${deliveriesPage.totalElements == 0}">
+                        <td colspan="8" style="text-align: center; padding: 30px;" class="muted">
+                            No deliveries found. <button type="button" class="btn btn-link p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#newDeliveryModal">Create your first delivery</button>.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="pagination" th:if="${deliveriesPage.totalPages > 1}">
             <a th:if="${deliveriesPage.hasPrevious()}" 
