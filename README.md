@@ -1,38 +1,53 @@
-[Project Name: Attire Flow]
-Group Name: [The 404s]
-
-Team Members: [Jenny Nguyen], [Annie Nguyen], [Anupa Ragoonanan], [Joseph Nahas]
+AttireFlow - Warehouse Inventory Management
+Group Name: The 404s
+Team Members: Jenny Nguyen, Annie Nguyen, Anupa Ragoonanan, Joseph Nahas
 
 Project Overview
 
 What We're Building:
-Build an inventory management system for a fashion warehouse with multi-location distribution.
+AttireFlow is an internal inventory management system for a fashion warehouse with multi‑location distribution. It enables staff to track products, stock levels, and deliveries, with role‑based access for Admins and Managers.
 
 Key Innovation: 
-Unlike basic inventory systems, Attire Flow implements role-based inventory control with:
-Transfer workflows (PENDING → APPROVED → COMPLETED)
-Reorder-level alerts for low stock
-Supplier-linked products for purchase tracking
-Audit trails via Transfer logs
+Product & Variant Management: Products have variants (size/color) with unique SKUs and prices.
 
+Inventory Tracking: Stock levels per variant per warehouse, with reorder‑level alerts.
 
-How It Works:
-Admin creates Brands, Products, Warehouses, and Suppliers in the system.
-Variants (size/color combos) are linked to Products -  each with its own SKU and price.
-Inventory is tracked per Variant per Warehouse, with reorder-level alerts.
+Delivery Management: Create and track incoming/outgoing deliveries; filter, sort, and paginate delivery records.
 
-Managers can:
-View stock levels
-Restock inventory when low
+Role‑Based Access: Admins manage users, suppliers, and approvals; Managers handle stock and deliveries.
 
-Admins oversee everything:
-Approve/audit Transfers
-Manage Suppliers and Users
-Maintain product catalogs
+Audit Logs: Transfer workflows (PENDING → APPROVED → COMPLETED) and logs for tracking changes.
 
-The system ensures data integrity through role-based access , no customer-facing storefront through:
-Role-based access control
-Low-stock notifications
+Supplier Integration: Products linked to suppliers for purchase tracking.
 
-Note: There is no customer-facing storefront - this is strictly an internal warehouse management tool. Inventory is managed at fixed warehouse locations with no transfers between them.
+Note: This is strictly an internal tool with no customer‑facing storefront. Inventory is managed at fixed warehouse locations; transfers between warehouses are not implemented as a separate page but are tracked via delivery orders.
 
+Technologies Used
+Java 17, Spring Boot 3, Spring Data JPA, Thymeleaf, H2 Database, Maven, Git.
+
+How to Run the Application
+Prerequisites: Java 17 or later installed.
+
+1. Clone the repository:
+git clone https://github.com/JosephNahas/AttireFlow.git
+
+2. Navigate into the project folder:
+cd AttireFlow
+
+3. Build and run using the Maven wrapper:
+./mvnw spring-boot:run
+
+Open your browser and go to:
+
+Home: http://localhost:8080/
+Inventory: http://localhost:8080/inventory
+Deliveries: http://localhost:8080/deliveries
+
+Team Contributions
+Joseph Nahas: Built the inventory page with full CRUD, search/filter/sort, and variant management. 
+
+Jenny Nguyen: Built the deliveries page with entity, repository, service, controller, and templates. Added validation, filtering, sorting, and pagination. Updated the README.
+
+Anupa Ragoonanan: Handled the overall styling of the application, including layout adjustments and modal designs.
+
+Annie Nguyen: Built the dashboard page and home page with search functionality.
