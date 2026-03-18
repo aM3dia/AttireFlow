@@ -225,11 +225,27 @@ public class InventoryController {
             return "redirect:/inventory";
         }
     }
-
-    @PostMapping("/inventory/{id}/delete")
-    public String deleteVariant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        variantRepository.deleteById(id);
+@PostMapping("/inventory/{id}/delete")
+public String deleteVariant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    try {
+        Variant variant = variantRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Variant not found"));
+        
+        System.err.println("DELETING VARIANT ID: " + id);
+        System.err.println("Deliveries count: " + variant.getDeliveries().size());
+        
+        if (variant.getDeliveries() != null && !variant.getDeliveries().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Cannot delete this item because it has " + variant.getDeliveries().size() + 
+                " delivery(s) linked. Please cancel deliveries first.");
+            return "redirect:/inventory";
+        }
+        
+        variantRepository.delete(variant);
         redirectAttributes.addFlashAttribute("successMessage", "Variant deleted successfully.");
-        return "redirect:/inventory";
+        
+    } catch (Exception ex) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Error deleting variant: " + ex.getMessage());
     }
-}
+    return "redirect:/inventory";
+}}

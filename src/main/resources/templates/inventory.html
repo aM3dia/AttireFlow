@@ -43,6 +43,7 @@
         </div>
 
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Success</div>
+<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Error</div>
 
         <div class="card" style="margin: 20px 0;">
             <form method="get" th:action="@{/inventory}">
