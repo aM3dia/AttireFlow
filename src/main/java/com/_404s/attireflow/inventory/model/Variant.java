@@ -31,6 +31,9 @@ public class Variant {
     @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VariantStock> stocks = new ArrayList<>();
 
+@OneToMany(mappedBy = "variant")
+private List<Delivery> deliveries = new ArrayList<>();
+
     public Variant() {}
 
     public Variant(String title, String category, String size, String color, BigDecimal unitPrice) {
@@ -49,10 +52,13 @@ public class Variant {
     public BigDecimal getUnitPrice() { return unitPrice; }
     public List<VariantStock> getStocks() { return stocks; }
 
+public List<Delivery> getDeliveries() { return deliveries; }
+
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setCategory(String category) { this.category = category; }
     public void setSize(String size) { this.size = size; }
     public void setColor(String color) { this.color = color; }
     public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+    public void setDeliveries(List<Delivery> deliveries) { this.deliveries = deliveries; }
 }
