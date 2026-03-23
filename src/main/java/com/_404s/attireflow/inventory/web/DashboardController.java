@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,6 +66,12 @@ public class DashboardController {
                 .limit(5)
                 .toList();
         model.addAttribute("lowStockItems", lowStockItems);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserLabel = (authentication != null && authentication.isAuthenticated())
+                ? authentication.getName()
+                : "Not logged in";
+        model.addAttribute("currentUserLabel", currentUserLabel);
 
         return "dashboard";
     }
