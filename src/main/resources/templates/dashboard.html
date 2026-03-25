@@ -15,26 +15,10 @@
                 Currently logged in as:
                 <strong class="text-primary" th:text="${currentUserLabel}">Not logged in</strong>
             </p>
-
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                <a class="btn btn-sm"
-                   th:classappend="${currentUserLabel == 'Admin'} ? ' btn-primary' : ' btn-outline-primary'"
-                   href="/test-login/ADMIN">Log in as Admin</a>
-
-                <a class="btn btn-sm"
-                   th:classappend="${currentUserLabel == 'Inventory Manager'} ? ' btn-primary' : ' btn-outline-primary'"
-                   href="/test-login/INVENTORY_MANAGER">Inventory Manager</a>
-
-                <a class="btn btn-sm"
-                   th:classappend="${currentUserLabel == 'Delivery Manager'} ? ' btn-primary' : ' btn-outline-primary'"
-                   href="/test-login/DELIVERY_MANAGER">Delivery Manager</a>
-
-                <a class="btn btn-sm btn-outline-secondary" href="/test-logout">Log out</a>
-            </div>
         </div>
     </div>
 
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="main-body">
         <div class="header">

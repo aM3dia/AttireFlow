@@ -9,82 +9,71 @@
 </head>
 <body>
     <!-- nav bar -->
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="text-center mt-4">
         <h1>Registration Page</h1>
         <p>Complete the form to register a staff memeber</p>
     </div>
 
-        <!-- registration form -->
-        <div class="form-container w-25 m-auto">
-            <form class="bg-dark-subtle p-4 rounded shadow-sm" onsubmit="return validateForm()">
-                <!-- first name -->
-                <div class="mb-3">
-                    <label for="firstName" class="form-label fw-bold">First Name</label>
-                    <input type="text" class="form-control" id="firstName" required>
-                    <div class="error-message text-danger small mt-1" id="firstNameError" >
-                        Error message.
-                    </div>
+    <!-- registration form -->
+    <div class="form-container w-25 m-auto">
+        <form class="bg-dark-subtle p-4 rounded shadow-sm"
+              th:action="@{/admin/register-staff}"
+              th:object="${staffRegistrationForm}"
+              method="post">
+            <!-- first name -->
+            <div class="mb-3">
+                <label for="firstName" class="form-label fw-bold">First Name</label>
+                <input type="text" class="form-control" id="firstName" required>
+                <div class="error-message text-danger small mt-1" id="firstNameError">
+                    Error message.
                 </div>
+            </div>
 
-                <!-- last name -->
-                <div class="mb-3">
-                    <label for="lastName" class="form-label fw-bold">Last Name</label>
-                    <input type="text" class="form-control" id="lastName" required>
-                    <div class="error-message text-danger small mt-1" id="lastNameError">
-                        Error message.
-                    </div>
+            <!-- last name -->
+            <div class="mb-3">
+                <label for="lastName" class="form-label fw-bold">Last Name</label>
+                <input type="text" class="form-control" id="lastName" required>
+                <div class="error-message text-danger small mt-1" id="lastNameError">
+                    Error message.
                 </div>
+            </div>
 
-                <!-- username -->
-                <div class="mb-3">
-                    <label for="username" class="form-label fw-bold">Username</label>
-                    <input type="text" class="form-control" id="username" required>
-                    <div class="error-message text-danger small mt-1" id="usernameError">
-                        Error message.
-                    </div>
-                </div>
+            <!-- username -->
+            <div class="mb-3">
+                <label for="username" class="form-label fw-bold">Username</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" required>
+            </div>
 
-                <!-- password -->
-                <div class="mb-3">
-                    <label for="password" class="form-label fw-bold">Password</label>
-                    <input type="password" class="form-control" id="password" required>
-                    <div class="error-message text-danger small mt-1" id="passwordError">
-                        Error message.
-                    </div>
-                </div>
+            <div class="mb-3">
+                <label for="password" class="form-label fw-bold">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" required>
+            </div>
 
-                <!-- confirm password -->
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label fw-bold">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" required>
-                    <div class="error-message text-danger small mt-1" id="confirmPasswordError">
-                        Passwords do not match.
-                    </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label fw-bold">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" required>
+                <div class="error-message text-danger small mt-1" id="confirmPasswordError">
+                    Passwords do not match.
                 </div>
+            </div>
 
-                <!-- role -->
-                <div class="mb-3">
-                    <label for="role" class="form-label fw-bold">Authorization Level</label>
-                    <select class="form-select" id="role" required>
-                        <option value="">Select role</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="INVENTORY_STAFF">Inventory Staff</option>
-                        <option value="DELIVERY_STAFF">Delivery Staff</option>
-                    </select>
-                    <div class="error-message text-danger small mt-1" id="roleError">
-                        Please select a role.
-                    </div>
-                </div>
+            <div class="mb-3">
+                <label for="role" class="form-label fw-bold">Authorization Level</label>
+                <select class="form-select" id="role" th:field="*{role}" required>
+                    <option value="">Select role</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="INVENTORY_MANAGER">Inventory Manager</option>
+                    <option value="DELIVERY_MANAGER">Delivery Manager</option>
+                </select>
+            </div>
 
-                <!-- submit button -->
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Register Staff</button>
-                    <a href="/admin" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
-        </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Register Staff</button>
+                <a href="/admin" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </body>
 </html>

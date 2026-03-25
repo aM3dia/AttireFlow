@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- nav bar -->
-    <div th:replace="fragments/navbar :: navbar"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- page content -->
     <div class="d-flex flex-row justify-content-between pt-3">
@@ -29,118 +29,114 @@
         </div>
     </div>
 
-    <!-- table of staff members, their role, and authorization level -->
+    <div class="container mt-3">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    </div>
+
     <div>
-        <table class="table table-dark table-striped">
+        <table class="table table-dark table-striped align-middle">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
+                    <th scope="col">Username</th>
                     <th scope="col">Authorization</th>
                     <th scope="col">Account Action</th>
                 </tr>
             </thead>
+            <tbody>
+                <tr th:each="user, iterStat : ${users}" th:attr="data-user-id=${user.id}" class="user-row">
+                    <th scope="row" th:text="${iterStat.count}">1</th>
+
+                    <td>
+                        <span class="username-display" th:text="${user.username}">admin</span>
+                        <input type="text" class="form-control form-control-sm edit-username mt-1 d-none"
+                               th:value="${user.username}">
+                    </td>
+
+                    <td>
+                        <span class="role-display" th:text="${user.role.displayName}">Admin</span>
+                        <select class="form-select form-select-sm edit-role mt-1 d-none">
+                            <option value="ADMIN" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).ADMIN}">Admin</option>
+                            <option value="INVENTORY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).INVENTORY_MANAGER}">Inventory Manager</option>
+                            <option value="DELIVERY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).DELIVERY_MANAGER}">Delivery Manager</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <!-- display actions -->
+                        <div class="display-actions d-flex gap-2 flex-wrap">
+                            <button class="btn btn-sm btn-primary edit-btn" type="button">Edit</button>
+                            <button class="btn btn-sm btn-danger delete-btn"
+                                    type="button"
+                                    th:attr="data-user-id=${user.id}"
+                                    th:if="${user.username != currentUserLabel}">
+                                Delete
+                            </button>
+                            <span class="text-muted small align-self-center" th:if="${user.username == currentUserLabel}">
+            Current account
+        </span>
+                        </div>
+
+                        <!-- edit actions -->
+                        <div class="edit-actions d-flex gap-2 flex-wrap d-none">
+                            <button class="btn btn-sm btn-success update-btn" type="button" th:attr="data-user-id=${user.id}">Update</button>
+                            <button class="btn btn-sm btn-secondary cancel-btn" type="button">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
         </table>
-        <tbody>
-            <tr th:each="user, iterStat : ${users}" th:attr="data-user-id=${user.id}" class="user-row">
-                <th scope="row" th:text="${iterStat.count}">1</th>
-                
-                <!-- first name -->
-                <td class="display-mode">
-                    <span class="display-mode first-name-display" th:text="${user.firstName}">John</span>
-                    <input type="text" class="form-control form-control-sm edit-mode edit-first-name" th:value="${user.firstName}" style="display: none;">
-                </td>
-                
-                <!-- last name -->
-                <td class="display-mode">
-                    <span class="display-mode last-name-display" th:text="${user.lastName}">Doe</span>
-                    <input type="text" class="form-control form-control-sm edit-mode edit-last-name" th:value="${user.lastName}" style="display: none;">
-                </td>
-                
-                <!-- role/authorization -->
-                <td class="display-mode">
-                    <span class="display-mode role-display" th:text="${user.role}">Admin</span>
-                    <select class="form-select form-select-sm edit-mode edit-role" style="display: none;">
-                        <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Admin</option>
-                        <option value="INVENTORY_STAFF" th:selected="${user.role == 'INVENTORY_STAFF'}">Inventory Staff</option>
-                        <option value="DELIVERY_STAFF" th:selected="${user.role == 'DELIVERY_STAFF'}">Delivery Staff</option>
-                    </select>
-                </td>
-                
-                <!-- actions -->
-                <td>
-                    <!-- display mode -->
-                    <div class="display-mode">
-                        <button class="btn btn-sm btn-primary edit-btn">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-btn" th:attr="data-user-id=${user.id}">Delete</button>
-                    </div>
-                    <!-- edit mode -->
-                    <div class="edit-mode" style="display: none;">
-                        <button class="btn btn-sm btn-success update-btn" th:attr="data-user-id=${user.id}">Update</button>
-                        <button class="btn btn-sm btn-secondary cancel-btn">Cancel</button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
     </div>
 
-    <!-- script for updating information -->
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // Edit button click
+            function setEditMode(row, editing) {
+                row.querySelector('.username-display').classList.toggle('d-none', editing);
+                row.querySelector('.role-display').classList.toggle('d-none', editing);
+                row.querySelector('.edit-username').classList.toggle('d-none', !editing);
+                row.querySelector('.edit-role').classList.toggle('d-none', !editing);
+                row.querySelector('.display-actions').classList.toggle('d-none', editing);
+                row.querySelector('.edit-actions').classList.toggle('d-none', !editing);
+            }
+
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    row.querySelectorAll('.display-mode').forEach(el => el.style.display = 'none');
-                    row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'table-cell');
+                    setEditMode(this.closest('tr'), true);
                 });
             });
-            
-            // Cancel button click
+
             document.querySelectorAll('.cancel-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    row.querySelectorAll('.display-mode').forEach(el => el.style.display = 'table-cell');
-                    row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
+                    setEditMode(this.closest('tr'), false);
                 });
             });
-            
-            // Update button click
+
             document.querySelectorAll('.update-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const row = this.closest('tr');
                     const userId = this.getAttribute('data-user-id');
-                    const firstName = row.querySelector('.edit-first-name').value;
-                    const lastName = row.querySelector('.edit-last-name').value;
+                    const username = row.querySelector('.edit-username').value;
                     const role = row.querySelector('.edit-role').value;
-                    
-                    // Update the display values
-                    row.querySelector('.first-name-display').textContent = firstName;
-                    row.querySelector('.last-name-display').textContent = lastName;
-                    row.querySelector('.role-display').textContent = role;
-                    
-                    // Send update to server
+
                     fetch('/admin/users/' + userId + '/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: 'firstName=' + encodeURIComponent(firstName) + 
-                            '&lastName=' + encodeURIComponent(lastName) +
+                        body: 'username=' + encodeURIComponent(username) +
                             '&role=' + encodeURIComponent(role)
-                    })
-                    .then(response => {
+                    }).then(response => {
                         if (response.ok) {
-                            // Switch back to display mode
-                            row.querySelectorAll('.display-mode').forEach(el => el.style.display = 'table-cell');
-                            row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
+                            row.querySelector('.username-display').textContent = username;
+                            row.querySelector('.role-display').textContent = row.querySelector('.edit-role').selectedOptions[0].text;
+                            setEditMode(row, false);
+                            window.location.reload();
                         }
                     });
                 });
             });
-            
-            // Delete button click
+
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (confirm('Are you sure you want to delete this user?')) {
