@@ -166,3 +166,7 @@ h1 {
     padding: 0px 10px;
     border-radius: 10px;
 }
+
+.w-fit-content {
+    width: fit-content;
+}
