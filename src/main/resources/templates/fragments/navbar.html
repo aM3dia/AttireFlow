@@ -26,16 +26,21 @@
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/admin}" class="nav-link">Admin</a>
                 </li>
-
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a th:href="@{/login}" class="nav-link">Login</a>
-                </li>
-
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a th:href="@{/registration}" class="nav-link">Registration</a>
-                </li>
             </ul>
         </div>
+
+        <!-- authorization actions -->
+        <li class="navbar-nav nav-item fw-bold" sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="nav-link">Login</a>
+        </li>
+
+        <li class="navbar-nav nav-item fw-bold" sec:authorize="isAuthenticated()">
+            <form action="/logout" method="post">
+                <button type="submit" class="btn btn-disabled-opacity fw-bold">
+                    Logout
+                </button>
+            </form>
+        </li>
     </nav>
 </body>
 </html>
