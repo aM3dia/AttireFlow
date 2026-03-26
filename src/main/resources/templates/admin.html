@@ -56,7 +56,8 @@
 
                     <td>
                         <span class="role-display" th:text="${user.role.displayName}">Admin</span>
-                        <select class="form-select form-select-sm edit-role mt-1 d-none">
+                        <select class="form-select form-select-sm edit-role mt-1 d-none"
+                                th:if="${adminCount > 1}">
                             <option value="ADMIN" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).ADMIN}">Admin</option>
                             <option value="INVENTORY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).INVENTORY_MANAGER}">Inventory Manager</option>
                             <option value="DELIVERY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).DELIVERY_MANAGER}">Delivery Manager</option>
@@ -91,11 +92,16 @@
 
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            function setEditMode(row, editing) {
+          function setEditMode(row, editing) {
                 row.querySelector('.username-display').classList.toggle('d-none', editing);
                 row.querySelector('.role-display').classList.toggle('d-none', editing);
                 row.querySelector('.edit-username').classList.toggle('d-none', !editing);
-                row.querySelector('.edit-role').classList.toggle('d-none', !editing);
+
+                const editRole = row.querySelector('.edit-role');
+                if (editRole) {
+                    editRole.classList.toggle('d-none', !editing);
+                }
+
                 row.querySelector('.display-actions').classList.toggle('d-none', editing);
                 row.querySelector('.edit-actions').classList.toggle('d-none', !editing);
             }

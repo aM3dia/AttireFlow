@@ -30,7 +30,13 @@ public class PageController {
 
     @GetMapping("/admin")
     public String adminPage(Model model) {
-        model.addAttribute("users", appUserService.getAllUsers());
+        var users = appUserService.getAllUsers();
+        model.addAttribute("users", users);
+
+        long adminCount = users.stream()
+                .filter(user -> user.getRole() == com._404s.attireflow.security.AppRole.ADMIN)
+                .count();
+        model.addAttribute("adminCount", adminCount);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserLabel = (authentication != null && authentication.isAuthenticated())
