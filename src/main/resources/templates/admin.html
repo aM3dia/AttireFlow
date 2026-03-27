@@ -56,7 +56,9 @@
                     <!-- authorization level -->
                     <td>
                         <span class="role-display" th:text="${user.role.displayName}">Admin</span>
-                        <select class="form-select form-select-sm edit-role d-none" style="width: 50% !important;">
+
+                        <select class="form-select form-select-sm edit-role d-none" style="width: 50% !important;"
+                                th:if="${user.role.name() != 'ADMIN' or adminCount > 1}">
                             <option value="ADMIN" th:selected="${user.role.name() == 'ADMIN'}">Admin</option>
                             <option value="INVENTORY_MANAGER" th:selected="${user.role.name() == 'INVENTORY_MANAGER'}">Inventory Manager</option>
                             <option value="DELIVERY_MANAGER" th:selected="${user.role.name() == 'DELIVERY_MANAGER'}">Delivery Manager</option>
@@ -122,7 +124,7 @@
                     const row = this.closest('tr');
                     const userId = this.getAttribute('data-user-id');
                     const username = row.querySelector('.edit-username').value;
-                    const role = row.querySelector('.edit-role').value;
+                    const role = row.querySelector('.edit-role') ? row.querySelector('.edit-role').value : null;
 
                     fetch('/admin/users/' + userId + '/update', {
                         method: 'POST',
@@ -130,11 +132,13 @@
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
                         body: 'username=' + encodeURIComponent(username) +
-                            '&role=' + encodeURIComponent(role)
+                            (role ? '&role=' + encodeURIComponent(role) : '')
                     }).then(response => {
                         if (response.ok) {
                             row.querySelector('.username-display').textContent = username;
-                            row.querySelector('.role-display').textContent = row.querySelector('.edit-role').selectedOptions[0].text;
+                            if (row.querySelector('.edit-role')) {
+                                row.querySelector('.role-display').textContent = row.querySelector('.edit-role').selectedOptions[0].text;
+                            }
                             setEditMode(row, false);
                             window.location.reload();
                         }
