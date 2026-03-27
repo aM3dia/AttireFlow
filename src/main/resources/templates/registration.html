@@ -16,6 +16,9 @@
         <p>Complete the form to register a staff memeber</p>
     </div>
 
+    <!-- error message -->
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
     <!-- registration form -->
     <div class="form-container w-25 m-auto">
         <form class="bg-dark-subtle p-4 rounded shadow-sm"
@@ -26,18 +29,12 @@
             <div class="mb-3">
                 <label for="firstName" class="form-label fw-bold">First Name</label>
                 <input type="text" class="form-control" id="firstName" required>
-                <div class="error-message text-danger small mt-1" id="firstNameError">
-                    Error message.
-                </div>
             </div>
 
             <!-- last name -->
             <div class="mb-3">
                 <label for="lastName" class="form-label fw-bold">Last Name</label>
                 <input type="text" class="form-control" id="lastName" required>
-                <div class="error-message text-danger small mt-1" id="lastNameError">
-                    Error message.
-                </div>
             </div>
 
             <!-- username -->
@@ -54,9 +51,6 @@
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label fw-bold">Confirm Password</label>
                 <input type="password" class="form-control" id="confirmPassword" required>
-                <div class="error-message text-danger small mt-1" id="confirmPasswordError">
-                    Passwords do not match.
-                </div>
             </div>
 
             <div class="mb-3">

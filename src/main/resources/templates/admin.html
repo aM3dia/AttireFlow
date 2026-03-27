@@ -31,13 +31,12 @@
 
     <div class="container mt-3">
         <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
     </div>
 
     <div>
-        <table class="table table-dark table-striped align-middle">
+        <table class="table align-middle">
             <thead>
-                <tr>
+                <tr class="table table-dark table-striped">
                     <th scope="col">#</th>
                     <th scope="col">Username</th>
                     <th scope="col">Authorization</th>
@@ -50,17 +49,17 @@
 
                     <td>
                         <span class="username-display" th:text="${user.username}">admin</span>
-                        <input type="text" class="form-control form-control-sm edit-username mt-1 d-none"
+                        <input type="text" class="form-control form-control-sm edit-username mt-1 d-none" style="width: 50% !important;"
                                th:value="${user.username}">
                     </td>
 
+                    <!-- authorization level -->
                     <td>
                         <span class="role-display" th:text="${user.role.displayName}">Admin</span>
-                        <select class="form-select form-select-sm edit-role mt-1 d-none"
-                                th:if="${adminCount > 1}">
-                            <option value="ADMIN" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).ADMIN}">Admin</option>
-                            <option value="INVENTORY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).INVENTORY_MANAGER}">Inventory Manager</option>
-                            <option value="DELIVERY_MANAGER" th:selected="${user.role == T(com._404s.attireflow.security.AppRole).DELIVERY_MANAGER}">Delivery Manager</option>
+                        <select class="form-select form-select-sm edit-role d-none" style="width: 50% !important;">
+                            <option value="ADMIN" th:selected="${user.role.name() == 'ADMIN'}">Admin</option>
+                            <option value="INVENTORY_MANAGER" th:selected="${user.role.name() == 'INVENTORY_MANAGER'}">Inventory Manager</option>
+                            <option value="DELIVERY_MANAGER" th:selected="${user.role.name() == 'DELIVERY_MANAGER'}">Delivery Manager</option>
                         </select>
                     </td>
 
