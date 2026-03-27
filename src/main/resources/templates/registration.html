@@ -16,9 +16,6 @@
         <p>Complete the form to register a staff memeber</p>
     </div>
 
-    <!-- error message -->
-    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-
     <!-- registration form -->
     <div class="form-container w-25 m-auto">
         <form class="bg-dark-subtle p-4 rounded shadow-sm"
@@ -41,6 +38,10 @@
             <div class="mb-3">
                 <label for="username" class="form-label fw-bold">Username</label>
                 <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                <!-- error message -->
+                <div th:if="${usernameExists}" class="text-danger error-message pt-2">
+                    <small>Username already exists.</small>
+                </div>
             </div>
 
             <div class="mb-3">
@@ -51,6 +52,10 @@
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label fw-bold">Confirm Password</label>
                 <input type="password" class="form-control" id="confirmPassword" required>
+                <!-- error message -->
+                <div th:if="${passwordMismatch}" class="text-danger error-message pt-2">
+                    <small>Passwords do not match.</small>
+                </div>
             </div>
 
             <div class="mb-3">
